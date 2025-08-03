@@ -2,7 +2,6 @@ import { Link, useNavigate, useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, X } from "lucide-react";
 import { getStatusBadge } from "@/utils/StatusBadge";
-import { book } from "@/utils/data";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
