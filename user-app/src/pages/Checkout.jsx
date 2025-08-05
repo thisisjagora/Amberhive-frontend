@@ -100,23 +100,59 @@ const Checkout = () => {
     return Object.keys(errors).length === 0;
   };
 
+  // useEffect(() => {
+  //   dispatch(fetchCarts()).then((action) => {
+  //     const items = action.payload?.items || [];
+
+  //     if (items.length > 0) {
+  //       const currency = items[0]?.book?.currency?.toLowerCase();
+
+  //       const defaultMethod =
+  //         currency === "ngn"
+  //           ? "paystack"
+  //           : currency === "usd"
+  //           ? "stripe"
+  //           : null;
+
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         payment_method: defaultMethod,
+  //       }));
+  //     }
+  //   });
+  // }, [dispatch]);
+
   useEffect(() => {
     dispatch(fetchCarts()).then((action) => {
       const items = action.payload?.items || [];
 
       if (items.length > 0) {
-        const currency = items[0]?.book?.currency?.toLowerCase();
+        const subtotal = items.reduce((acc, item) => {
+          const price =
+            item.book?.discount_price &&
+            parseFloat(item.book.discount_price) < parseFloat(item.book.price)
+              ? parseFloat(item.book.discount_price)
+              : parseFloat(item.book.price || 0);
 
-        const defaultMethod =
-          currency === "ngn"
+          const quantity = Number(item.quantity) || 1;
+          return acc + price * quantity;
+        }, 0);
+
+        const vat = subtotal * 0.075;
+        const total = subtotal + vat;
+
+        const payment_method =
+          total === 0
+            ? ""
+            : items[0]?.book?.currency?.toLowerCase() === "ngn"
             ? "paystack"
-            : currency === "usd"
+            : items[0]?.book?.currency?.toLowerCase() === "usd"
             ? "stripe"
-            : null;
+            : "";
 
         setFormData((prev) => ({
           ...prev,
-          payment_method: defaultMethod,
+          payment_method,
         }));
       }
     });
@@ -149,8 +185,6 @@ const Checkout = () => {
 
   const vat = subtotal * 0.075;
   const total = subtotal + vat;
-
- 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -306,6 +340,7 @@ const Checkout = () => {
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
                 <SelectContent className="font-gilroy">
+                  {/* <SelectItem value="free">Free</SelectItem> */}
                   <SelectItem value="paystack">Paystack</SelectItem>
                   <SelectItem value="stripe">Stripe</SelectItem>
                 </SelectContent>
