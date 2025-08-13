@@ -5,8 +5,7 @@ export const formatDate = (dateString) =>
     day: "numeric",
   });
 
-
-  export const formatNaira = (amount) => {
+export const formatNaira = (amount) => {
   const num = parseFloat(amount);
   if (isNaN(num)) return "₦0.00";
 

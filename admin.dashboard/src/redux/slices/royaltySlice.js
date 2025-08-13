@@ -8,14 +8,18 @@ export const fetchPendingRoyaltyNaira = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
       const response = await api.get("/admin/pending-royalty-payments-naira", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data.data;
+
+      // Return both data and total
+      return {
+        data: response.data.data,
+        total: response.data.total,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch pending Naira royalties"
+        error.response?.data?.message ||
+          "Failed to fetch pending Naira royalties"
       );
     }
   }
@@ -28,11 +32,13 @@ export const fetchPendingRoyaltyUSD = createAsyncThunk(
     try {
       const token = localStorage.getItem("token");
       const response = await api.get("/admin/pending-royalty-payments-usd", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      return response.data.data;
+
+      return {
+        data: response.data.data,
+        total: response.data.total,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch pending USD royalties"
@@ -44,8 +50,8 @@ export const fetchPendingRoyaltyUSD = createAsyncThunk(
 const royaltySlice = createSlice({
   name: "royalty",
   initialState: {
-    pendingNaira: [],
-    pendingUSD: [],
+    pendingNaira: { data: [], total: 0 },
+    pendingUSD: { data: [], total: 0 },
     statusNaira: "idle",
     statusUSD: "idle",
     error: null,
@@ -60,7 +66,7 @@ const royaltySlice = createSlice({
       })
       .addCase(fetchPendingRoyaltyNaira.fulfilled, (state, action) => {
         state.statusNaira = "succeeded";
-        state.pendingNaira = action.payload;
+        state.pendingNaira = action.payload; // now has both data and total
       })
       .addCase(fetchPendingRoyaltyNaira.rejected, (state, action) => {
         state.statusNaira = "failed";

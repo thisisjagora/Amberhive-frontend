@@ -25,6 +25,7 @@ const Payout = () => {
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedAuthors, setExpandedAuthors] = useState({});
+  const [selectedTab, setSelectedTab] = useState("naira");
 
   useEffect(() => {
     dispatch(fetchPendingRoyaltyNaira());
@@ -113,10 +114,10 @@ const Payout = () => {
     );
   };
 
-  const groupedNaira = flattenRoyaltyData(pendingNaira).filter((author) =>
+  const groupedNaira = flattenRoyaltyData(pendingNaira.data).filter((author) =>
     author.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const groupedUSD = flattenRoyaltyData(pendingUSD).filter((author) =>
+  const groupedUSD = flattenRoyaltyData(pendingUSD.data).filter((author) =>
     author.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -142,6 +143,7 @@ const Payout = () => {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
+                    onClick={() => setSelectedTab(tab.value)}
                     className="text-base font-medium text-gray-600 
                       data-[state=active]:shadow-none 
                       data-[state=active]:text-base 
@@ -159,17 +161,31 @@ const Payout = () => {
             </div>
           </div>
           {/* Search */}
-          <div className="relative max-w-md mt-4">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-              size={16}
-            />
-            <Input
-              placeholder="Search author name..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="flex items-center justify-between max-w-md mt-4">
+            <div className="relative w-full">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                size={16}
+              />
+              <Input
+                placeholder="Search author name..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            {/* Display total */}
+            <div className="ml-4 text-sm flex items-center gap-2 font-semibold text-gray-700">
+              <h1 className="text-gray-500">Total:</h1>
+              <p className="text-lg">
+                {selectedTab === "naira"
+                  ? `₦${Number(pendingNaira.total ?? 0).toLocaleString(
+                      "en-NG"
+                    )}`
+                  : `$${Number(pendingUSD.total ?? 0).toLocaleString("en-US")}`}
+              </p>
+            </div>
           </div>
 
           {/* Tables */}
