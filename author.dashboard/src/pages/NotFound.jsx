@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
-import { useNavigate } from "react-router"; // useNavigate instead of useHistory
+import { useNavigate } from "react-router"; 
 
 const NotFound = () => {
-  const navigate = useNavigate(); // Get the navigate function
+  const navigate = useNavigate(); 
 
   return (
     <div className="h-screen flex flex-col justify-center items-center text-center">
