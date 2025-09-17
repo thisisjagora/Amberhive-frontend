@@ -286,28 +286,27 @@ export default function BookDetails() {
                   {bookDetail?.book?.reviews_count} reviews
                 </span>
               </div>
-<div className="flex items-center gap-6 mt-2">
-
-              <p className="text-lg font-semibold text-gray-800">
-                {bookDetail?.book?.currency === "ngn"
-                  ? "₦"
-                  : bookDetail?.book?.currency
-                  ? "$"
-                  : ""}
-                {bookDetail?.book?.discount_price || bookDetail?.book?.price}
-              </p>
-
-              {bookDetail?.book?.discount_price && (
-                <p className="text-sm text-red-500 line-through">
+              <div className="flex items-center gap-6 mt-2">
+                <p className="text-lg font-semibold text-gray-800">
                   {bookDetail?.book?.currency === "ngn"
                     ? "₦"
                     : bookDetail?.book?.currency
                     ? "$"
                     : ""}
-                  {bookDetail?.book?.price}
+                  {bookDetail?.book?.discount_price || bookDetail?.book?.price}
                 </p>
-              )}
-</div>
+
+                {bookDetail?.book?.discount_price && (
+                  <p className="text-sm text-red-500 line-through">
+                    {bookDetail?.book?.currency === "ngn"
+                      ? "₦"
+                      : bookDetail?.book?.currency
+                      ? "$"
+                      : ""}
+                    {bookDetail?.book?.price}
+                  </p>
+                )}
+              </div>
 
               {/* Description */}
               <div className="flex flex-col border-b-[2px] py-2 justify-start items-start">
@@ -389,10 +388,46 @@ export default function BookDetails() {
                   <Button
                     type="button"
                     variant="secondary"
-                    onClick={() => {
+                    onClick={async () => {
                       const url = `${window.location.origin}/book/${bookDetail?.book?.slug}`;
-                      navigator.clipboard.writeText(url);
-                      toast.success("Book link copied to clipboard!");
+                      const title = bookDetail?.book?.title;
+                      const author = bookDetail?.book?.author?.user?.name;
+                      const cover = bookDetail?.book?.cover_image
+                        ? `https://test.amber-hive.com/storage/${bookDetail.book.cover_image}`
+                        : "";
+
+                      // Build HTML with metadata
+                      const html = `
+      <div>
+        <strong>${title}</strong><br/>
+        <em>by ${author}</em><br/>
+        ${
+          cover
+            ? `<img src="${cover}" alt="${title}" width="120" style="margin-top:8px" />`
+            : ""
+        }
+        <p><a href="${url}">${url}</a></p>
+      </div>
+    `;
+
+                      try {
+                        await navigator.clipboard.write([
+                          new ClipboardItem({
+                            "text/html": new Blob([html], {
+                              type: "text/html",
+                            }),
+                            "text/plain": new Blob([url], {
+                              type: "text/plain",
+                            }), // fallback
+                          }),
+                        ]);
+                        toast.success(
+                          "Book link (with metadata) copied to clipboard!"
+                        );
+                      } catch (err) {
+                        console.error("Clipboard write failed", err);
+                        toast.error("Could not copy link. Please try again.");
+                      }
                     }}
                     className="flex items-center cursor-pointer w-full sm:w-auto"
                   >
