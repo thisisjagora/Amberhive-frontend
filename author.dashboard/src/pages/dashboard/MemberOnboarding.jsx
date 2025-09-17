@@ -43,46 +43,46 @@ const MembershipSignup = () => {
   const [email, setEmail] = useState("");
   const [country] = useState("Nigeria");
 
-  const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
+  // const fetchUser = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       throw new Error("No authentication token found");
+  //     }
 
-      const response = await fetch(
-        "https://test.amber-hive.com/api/v1/me/author",
+  //     const response = await fetch(
+  //       "https://test.amber-hive.com/api/v1/me/author",
     
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "1",
-            "User-Agent": "Custom-User-Agent",
-          },
-        }
-      );
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //           "ngrok-skip-browser-warning": "1",
+  //           "User-Agent": "Custom-User-Agent",
+  //         },
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch user data");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch user data");
+  //     }
 
-      const data = await response.json();
-      // console.log("Fetched user data:", data);
+  //     const data = await response.json();
+  //     // console.log("Fetched user data:", data);
 
-      setAuthorId(data.id);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setErrorUser(err.message);
-    } finally {
-      setLoadingUser(false);
-    }
-  };
+  //     setAuthorId(data.id);
+  //   } catch (err) {
+  //     console.error("Fetch error:", err);
+  //     setErrorUser(err.message);
+  //   } finally {
+  //     setLoadingUser(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  // useEffect(() => {
+  //   fetchUser();
+  // }, []);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -140,6 +140,7 @@ const MembershipSignup = () => {
         }, 2000);
         return;
       } else if (provider === "free") {
+        console.log(planId)
         result = await dispatch(freeSubscribe(planId)).unwrap();
 
         if (result?.authorization_url) {
@@ -166,7 +167,7 @@ const MembershipSignup = () => {
         navigate("/profile-confirm");
       }
     } catch (err) {
-      toast.error(err.message || "Payment failed");
+      toast.error(err.message);
       console.error("Payment failed:", err);
     }
   };

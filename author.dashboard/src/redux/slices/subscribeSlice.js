@@ -86,9 +86,9 @@ export const freeSubscribe = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
+      // console.log(error.response.data)
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to initialize free subscription"
+        error.response?.data
       );
     }
   }

@@ -118,7 +118,7 @@ const MembershipSignup = () => {
       toast.success(result.message || "Subscription successful!");
       navigate("/dashboard/overview");
     } catch (err) {
-      toast.error(err.message || "Payment failed");
+      toast.error(err.message);
       console.error("Payment failed:", err);
     }
   };
