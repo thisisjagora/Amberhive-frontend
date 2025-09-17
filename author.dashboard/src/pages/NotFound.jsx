@@ -13,7 +13,7 @@ const NotFound = () => {
         <p className="text-gray-500">Oops! The page you are looking for does not exist.</p>
 
         <Button
-          onClick={() => navigate("/")} // Use navigate to redirect
+          onClick={() => navigate("/")}
           className="mt-6 px-6 py-2 bg-[#0A0451] text-white cursor-pointer font-semibold rounded-lg hover:bg-[#0A0451] transition"
         >
           Go Back to Home
