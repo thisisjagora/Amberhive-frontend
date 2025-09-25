@@ -573,15 +573,7 @@ export default function BookDetails() {
 
                         <p className="text-gray-800">{review.comment}</p>
 
-                        {/* <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                            <button className="hover:underline">Reply</button>
-                            <div className="flex items-center gap-1">
-                              <BsHandThumbsUp /> <span>0</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <BsHandThumbsDown /> <span>0</span>
-                            </div>
-                          </div> */}
+                       
                       </div>
                     </div>
                   ))}

@@ -83,7 +83,8 @@ export const updateBook = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue("Failed to update book");
+      console.log(error.response.data.message)
+      return thunkAPI.rejectWithValue(error?.response?.data?.message);
     }
   }
 );

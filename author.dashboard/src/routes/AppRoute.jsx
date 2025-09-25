@@ -36,6 +36,7 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsAndConditions from "@/pages/TermsAndConditions";
 import KnowledgeBase from "@/pages/dashboard/KnowledgeBase";
 import KnowledgeDetail from "@/pages/dashboard/KnowledgeDetial";
+import EditUploadBook from "@/pages/dashboard/publications/EditUploadBook";
 // import LogIn from "@/pages/auth/LogIn";
 
 const AppRoute = () => {
@@ -84,6 +85,10 @@ const AppRoute = () => {
         <Route
           path="/dashboard/publications/upload-book"
           element={<UploadBook />}
+        />
+         <Route
+          path="/dashboard/publications/edit-upload-book/:id"
+          element={<EditUploadBook />}
         />
         <Route
           path="/dashboard/publications/all-books"

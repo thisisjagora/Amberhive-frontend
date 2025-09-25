@@ -9,7 +9,7 @@ const SecureImage = ({ imagePath, alt, className }) => {
 
     const fetchImage = async () => {
       try {
-        const response = await fetch(`https://d32d-105-112-236-80.ngrok-free.app/storage/${imagePath}`, {
+        const response = await fetch(`https://test.amber-hive.com/storage/${imagePath}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

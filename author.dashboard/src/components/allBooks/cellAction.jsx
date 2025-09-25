@@ -37,7 +37,7 @@ import {
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { FaEdit, FaTags } from "react-icons/fa";
 import { toast } from "sonner";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { editBook, fetchMyBooks, trashBook } from "@/redux/slices/bookSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -157,8 +157,13 @@ export const CellAction = ({ data }) => {
 
           {data.status === "published" && (
             <>
-              <DropdownMenuItem onSelect={() => setShowEditModal(true)}>
-                <FaEdit className="mr-2 h-4 w-4 text-blue-600" /> Edit
+              {/* <DropdownMenuItem onSelect={() => setShowEditModal(true)}> */}
+              <DropdownMenuItem >
+                <Link className="flex items-center gap-2"
+                  to={`/dashboard/publications/edit-upload-book/${data.id}`}
+                >
+                  <FaEdit className="mr-2 h-4 w-4 text-blue-600" /> Edit
+                </Link>
               </DropdownMenuItem>
 
               <DropdownMenuItem onSelect={() => setShowPromoModal(true)}>
@@ -406,7 +411,7 @@ export const CellAction = ({ data }) => {
             <Input
               type="date"
               value={promoForm.duration}
-              min={new Date().toISOString().split("T")[0]} 
+              min={new Date().toISOString().split("T")[0]}
               onChange={(e) =>
                 setPromoForm({ ...promoForm, duration: e.target.value })
               }
