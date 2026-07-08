@@ -61,7 +61,7 @@ export default function App() {
         <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
         <Route element={<DefaultLayout />}>
-          {/* Home page now on `/home` */}
+       
           <Route path="/" element={<HomePage />} />
 
           <Route path="/about" element={<About />} />
