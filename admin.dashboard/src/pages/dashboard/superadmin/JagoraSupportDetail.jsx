@@ -32,7 +32,10 @@ const categoryColors = {
   5: "bg-green-100 text-green-800",
 };
 
-export function JagoraSupportDetail() {
+export function JagoraSupportDetail({
+  Layout = SuperAdminLayout,
+  basePath = "/super-admin",
+}) {
   const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -54,7 +57,7 @@ export function JagoraSupportDetail() {
 
   const handleBack = () => {
     if (location.state?.from === "tickets-tab") {
-      navigate("/dashboard/support?tab=tickets");
+      navigate(`${basePath}/jagora-support`);
     } else {
       navigate(-1);
     }
@@ -98,7 +101,7 @@ export function JagoraSupportDetail() {
   };
 
   return (
-    <SuperAdminLayout
+    <Layout
       header={
         <div className="flex flex-col px-2 mt-20 md:mt-0  justify-start items-start w-full">
           <h2 className="text-xl font-semibold text-gray-800">
@@ -348,6 +351,6 @@ export function JagoraSupportDetail() {
           </div>
         </div>
       </div>
-    </SuperAdminLayout>
+    </Layout>
   );
 }

@@ -22,6 +22,9 @@ import OpenTicketDetail from "@/pages/dashboard/admin/OpenTicketDetail";
 import FeaturedBooks from "@/pages/dashboard/admin/FeaturedBooks";
 import KnowledgeBase from "@/pages/dashboard/admin/KnowledgeBase";
 import KnowledgeDetail from "@/pages/dashboard/admin/KnowledgeDetail";
+import AdminLayout from "@/pages/dashboard/admin/DashboardLayout";
+import JagoraSupport from "@/pages/dashboard/superadmin/JagoraSupport";
+import { JagoraSupportDetail } from "@/pages/dashboard/superadmin/JagoraSupportDetail";
 
 const AdminRoutes = () => {
   return (
@@ -67,6 +70,14 @@ const AdminRoutes = () => {
       <Route path="promotion/total-views" element={<TotalViews />} />
 
       <Route path="support" element={<Support />} />
+      <Route
+        path="jagora-support"
+        element={<JagoraSupport Layout={AdminLayout} basePath="/admin" />}
+      />
+      <Route
+        path="jagora-support/:id"
+        element={<JagoraSupportDetail Layout={AdminLayout} basePath="/admin" />}
+      />
       <Route path="ticket/:id" element={<TicketDetail />} />
       <Route path="my-ticket/:id" element={<MyTicketDetail />} />
       <Route path="open-ticket/:id" element={<OpenTicketDetail />} />

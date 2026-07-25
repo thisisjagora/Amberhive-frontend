@@ -6,6 +6,7 @@ import suppIcon from "@/assets/icons/supp.png";
 import settIcon from "@/assets/icons/sett.png";
 import promIcon2 from "@/assets/icons/Icon.png";
 import { HiOutlineBookOpen } from "react-icons/hi";
+import { FiHelpCircle } from "react-icons/fi";
 
 export const links = [
   {
@@ -67,6 +68,12 @@ export const links = [
     name: "Support",
     path: "/admin/support",
     icon: <img src={suppIcon} alt="Support Icon" className="w-5 h-5" />,
+    subLinks: [],
+  },
+  {
+    name: "Jagora Support",
+    path: "/admin/jagora-support",
+    icon: <FiHelpCircle className="w-5 h-5" />,
     subLinks: [],
   },
     {

@@ -34,6 +34,7 @@ const initialState = {
   subject: "",
   description: "",
   category: "",
+  priority: "",
   image: null,
 };
 
@@ -65,10 +66,14 @@ const CreateTicket = () => {
     setForm((prev) => ({ ...prev, category: value }));
   };
 
-  const handleSubmit = async () => {
-    const { subject, description, category, image } = form;
+  const handlePriorityChange = (value) => {
+    setForm((prev) => ({ ...prev, priority: value }));
+  };
 
-    if (!subject || !description || !category) {
+  const handleSubmit = async () => {
+    const { subject, description, category, priority, image } = form;
+
+    if (!subject || !description || !category || !priority) {
       toast.error("Please fill all required fields.", {
         style: { background: "#000", color: "#fff" },
       });
@@ -82,6 +87,7 @@ const CreateTicket = () => {
       formData.append("subject", subject);
       formData.append("description", description);
       formData.append("category", parseInt(category, 10));
+      formData.append("priority", priority);
       if (image) formData.append("image", image);
 
       // ✅ Add your default field here
@@ -168,6 +174,27 @@ const CreateTicket = () => {
               </SelectContent>
             </Select>
 
+            {/* Priority */}
+            <div>
+              <Label className="text-sm font-medium text-gray-700">
+                Priority level*
+              </Label>
+              <Select
+                value={form.priority}
+                onValueChange={handlePriorityChange}
+              >
+                <SelectTrigger className="mt-1 w-full">
+                  <SelectValue placeholder="Select priority level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Image Upload */}
             <div>
               <Label className="text-sm font-medium text-gray-700">
@@ -214,7 +241,8 @@ const CreateTicket = () => {
                   isSubmitting ||
                   !form.subject ||
                   !form.description ||
-                  !form.category
+                  !form.category ||
+                  !form.priority
                 }
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >

@@ -11,7 +11,10 @@ import { Input } from "@/components/ui/input";
 import { fetchMyTickets } from "@/redux/slices/ticketJagoraSlice";
 import CreateTicket from "@/components/forms/CreateTicket";
 
-const JagoraSupport = () => {
+const JagoraSupport = ({
+  Layout = SuperAdminLayout,
+  basePath = "/super-admin",
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -135,7 +138,7 @@ const JagoraSupport = () => {
               variant="outline"
               size="sm"
               className="cursor-pointer"
-              onClick={() => navigate(`/super-admin/jagora-support/${id}`)}
+              onClick={() => navigate(`${basePath}/jagora-support/${id}`)}
             >
               View Ticket
             </Button>
@@ -155,7 +158,7 @@ const JagoraSupport = () => {
   });
 
   return (
-    <SuperAdminLayout
+    <Layout
       header={
         <div className="flex flex-col px-4 mt-20 md:mt-0 py-6 justify-start items-start w-full">
           <div className="flex flex-col items-start gap-2">
@@ -198,7 +201,7 @@ const JagoraSupport = () => {
           </div>
         </div>
       </div>
-    </SuperAdminLayout>
+    </Layout>
   );
 };
 
