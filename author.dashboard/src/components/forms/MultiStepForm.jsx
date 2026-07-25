@@ -21,6 +21,285 @@ import {
   verifyBankAccount,
 } from "@/redux/slices/profileSlice";
 
+const COUNTRY_CODES = [
+  "AF",
+  "AX",
+  "AL",
+  "DZ",
+  "AS",
+  "AD",
+  "AO",
+  "AI",
+  "AQ",
+  "AG",
+  "AR",
+  "AM",
+  "AW",
+  "AU",
+  "AT",
+  "AZ",
+  "BS",
+  "BH",
+  "BD",
+  "BB",
+  "BY",
+  "BE",
+  "BZ",
+  "BJ",
+  "BM",
+  "BT",
+  "BO",
+  "BQ",
+  "BA",
+  "BW",
+  "BV",
+  "BR",
+  "IO",
+  "BN",
+  "BG",
+  "BF",
+  "BI",
+  "CV",
+  "KH",
+  "CM",
+  "CA",
+  "KY",
+  "CF",
+  "TD",
+  "CL",
+  "CN",
+  "CX",
+  "CC",
+  "CO",
+  "KM",
+  "CG",
+  "CD",
+  "CK",
+  "CR",
+  "CI",
+  "HR",
+  "CU",
+  "CW",
+  "CY",
+  "CZ",
+  "DK",
+  "DJ",
+  "DM",
+  "DO",
+  "EC",
+  "EG",
+  "SV",
+  "GQ",
+  "ER",
+  "EE",
+  "SZ",
+  "ET",
+  "FK",
+  "FO",
+  "FJ",
+  "FI",
+  "FR",
+  "GF",
+  "PF",
+  "TF",
+  "GA",
+  "GM",
+  "GE",
+  "DE",
+  "GH",
+  "GI",
+  "GR",
+  "GL",
+  "GD",
+  "GP",
+  "GU",
+  "GT",
+  "GG",
+  "GN",
+  "GW",
+  "GY",
+  "HT",
+  "HM",
+  "VA",
+  "HN",
+  "HK",
+  "HU",
+  "IS",
+  "IN",
+  "ID",
+  "IR",
+  "IQ",
+  "IE",
+  "IM",
+  "IL",
+  "IT",
+  "JM",
+  "JP",
+  "JE",
+  "JO",
+  "KZ",
+  "KE",
+  "KI",
+  "KP",
+  "KR",
+  "KW",
+  "KG",
+  "LA",
+  "LV",
+  "LB",
+  "LS",
+  "LR",
+  "LY",
+  "LI",
+  "LT",
+  "LU",
+  "MO",
+  "MG",
+  "MW",
+  "MY",
+  "MV",
+  "ML",
+  "MT",
+  "MH",
+  "MQ",
+  "MR",
+  "MU",
+  "YT",
+  "MX",
+  "FM",
+  "MD",
+  "MC",
+  "MN",
+  "ME",
+  "MS",
+  "MA",
+  "MZ",
+  "MM",
+  "NA",
+  "NR",
+  "NP",
+  "NL",
+  "NC",
+  "NZ",
+  "NI",
+  "NE",
+  "NG",
+  "NU",
+  "NF",
+  "MK",
+  "MP",
+  "NO",
+  "OM",
+  "PK",
+  "PW",
+  "PS",
+  "PA",
+  "PG",
+  "PY",
+  "PE",
+  "PH",
+  "PN",
+  "PL",
+  "PT",
+  "PR",
+  "QA",
+  "RE",
+  "RO",
+  "RU",
+  "RW",
+  "BL",
+  "SH",
+  "KN",
+  "LC",
+  "MF",
+  "PM",
+  "VC",
+  "WS",
+  "SM",
+  "ST",
+  "SA",
+  "SN",
+  "RS",
+  "SC",
+  "SL",
+  "SG",
+  "SX",
+  "SK",
+  "SI",
+  "SB",
+  "SO",
+  "ZA",
+  "GS",
+  "SS",
+  "ES",
+  "LK",
+  "SD",
+  "SR",
+  "SJ",
+  "SE",
+  "CH",
+  "SY",
+  "TW",
+  "TJ",
+  "TZ",
+  "TH",
+  "TL",
+  "TG",
+  "TK",
+  "TO",
+  "TT",
+  "TN",
+  "TR",
+  "TM",
+  "TC",
+  "TV",
+  "UG",
+  "UA",
+  "AE",
+  "GB",
+  "US",
+  "UM",
+  "UY",
+  "UZ",
+  "VU",
+  "VE",
+  "VN",
+  "VG",
+  "VI",
+  "WF",
+  "EH",
+  "YE",
+  "ZM",
+  "ZW",
+];
+
+const FALLBACK_COUNTRIES = [
+  "Ghana",
+  "Kenya",
+  "Nigeria",
+  "South Africa",
+  "United Kingdom",
+  "United States",
+];
+
+const getCountryOptions = () => {
+  try {
+    const displayNames = new Intl.DisplayNames(["en"], { type: "region" });
+
+    return COUNTRY_CODES.map((code) => ({
+      code: code.toLowerCase(),
+      name: displayNames.of(code),
+    }))
+      .filter((country) => country.name)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  } catch {
+    return FALLBACK_COUNTRIES.map((name) => ({
+      code: name.toLowerCase().replace(/\s+/g, "-"),
+      name,
+    }));
+  }
+};
+
 export default function MultiStepForm() {
   const [step, setStep] = useState(1);
   const fileInputRef = useRef(null);
@@ -47,9 +326,7 @@ export default function MultiStepForm() {
   });
 
   const [user, setUser] = useState({ name: "", email: "" });
-  const [countries, setCountries] = useState([]);
-  const [loadingCountries, setLoadingCountries] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [countries] = useState(getCountryOptions);
   const [uploadError, setUploadError] = useState(false);
   const [resolvingAccountName, setResolvingAccountName] = useState(false);
   const dispatch = useDispatch();
@@ -94,30 +371,6 @@ export default function MultiStepForm() {
     }
   }, [formData.accountNumber, formData.bank]);
 
-  const handleDropdownOpen = async (open) => {
-    setDropdownOpen(open);
-    if (open && countries.length === 0 && !loadingCountries) {
-      setLoadingCountries(true);
-      try {
-        const response = await fetch(
-          "https://restcountries.com/v3.1/all?fields=name,cca2"
-        );
-        const data = await response.json();
-        const sortedCountries = data
-          .map((country) => ({
-            name: country.name.common,
-            code: country.cca2.toLowerCase(),
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
-        setCountries(sortedCountries);
-      } catch (error) {
-        console.error("Error loading countries:", error);
-        toast.error("Failed to load countries");
-      } finally {
-        setLoadingCountries(false);
-      }
-    }
-  };
   const [previewImage, setPreviewImage] = useState(null);
 
   const handleChange = async (field, value) => {
@@ -475,7 +728,6 @@ export default function MultiStepForm() {
               <Select
                 value={formData.country}
                 onValueChange={(val) => handleChange("country", val)}
-                onOpenChange={handleDropdownOpen}
               >
                 <SelectTrigger
                   id="country"
@@ -485,7 +737,7 @@ export default function MultiStepForm() {
                     <SelectValue placeholder="Select Country" />
                   </div>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-72">
                   {countries.length > 0 ? (
                     <>
                       {countries.map((country) => (
