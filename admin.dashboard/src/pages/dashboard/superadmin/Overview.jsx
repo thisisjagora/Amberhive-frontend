@@ -18,7 +18,7 @@ import { Line } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchSuperAdminDashboard } from "@/redux/slices/dashboardSlice";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatNaira } from "@/utils/format";
+import { formatNaira, formatUSD } from "@/utils/format";
 
 ChartJS.register(
   LineElement,
@@ -271,7 +271,7 @@ const Overview = () => {
       <div className="px-4 md:mt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:mt-4 mt-12">
           {statusSuperAdminDash === "loading" ? (
-            Array.from({ length: 8 }).map((_, i) => (
+            Array.from({ length: 15 }).map((_, i) => (
               <StatCardSkeleton key={i} />
             ))
           ) : (
@@ -338,6 +338,38 @@ const Overview = () => {
                     : "negative"
                 }
                 strokeColor="#4f46e5"
+              />
+
+              <StatCard
+                title="Total Revenue to Date (USD)"
+                amount={formatUSD(
+                  superAdminDash?.total_revenue_to_date?.USD ?? 0
+                )}
+                badgeText="To date"
+              />
+
+              <StatCard
+                title="Total Revenue to Date (NGN)"
+                amount={formatNaira(
+                  superAdminDash?.total_revenue_to_date?.NGN ?? 0
+                )}
+                badgeText="To date"
+              />
+
+              <StatCard
+                title="Total Royalties Paid to Date (USD)"
+                amount={formatUSD(
+                  superAdminDash?.total_royalties_paid_to_date?.USD ?? 0
+                )}
+                badgeText="To date"
+              />
+
+              <StatCard
+                title="Total Royalties Paid to Date (NGN)"
+                amount={formatNaira(
+                  superAdminDash?.total_royalties_paid_to_date?.NGN ?? 0
+                )}
+                badgeText="To date"
               />
 
               <StatCard

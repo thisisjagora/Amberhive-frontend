@@ -66,10 +66,12 @@ const StatCard = ({
         <div>
           <div className="space-y-2">
             <div className="text-2xl font-bold">{amount}</div>
-            <div className={`flex items-center text-sm ${changeColor}`}>
-              {arrow} {changeText}
-              <span className="text-gray-400 ml-1">vs last month</span>
-            </div>
+            {changeText !== undefined && changeText !== null && (
+              <div className={`flex items-center text-sm ${changeColor}`}>
+                {arrow} {changeText}
+                <span className="text-gray-400 ml-1">vs last month</span>
+              </div>
+            )}
           </div>
           {/* {data && strokeColor && (
             <LineMiniChart data={data} strokeColor={strokeColor} />

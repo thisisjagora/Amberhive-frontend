@@ -127,9 +127,17 @@ export const fetchBookById = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data;
+      const payload = response.data?.data ?? response.data;
+
+      // The endpoint has returned both a direct book record and a
+      // `{ data: { book: record } }` wrapper across API versions.
+      return payload?.book && typeof payload.book === "object"
+        ? payload.book
+        : payload;
     } catch (error) {
-      return thunkAPI.rejectWithValue("Failed to fetch book details");
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch book details"
+      );
     }
   }
 );
@@ -398,6 +406,8 @@ const bookApprovalSlice = createSlice({
       // ===== fetchBookById =====
       .addCase(fetchBookById.pending, (state) => {
         state.statusBookDetail = "loading";
+        state.bookDetail = null;
+        state.error = null;
       })
       .addCase(fetchBookById.fulfilled, (state, action) => {
         state.statusBookDetail = "succeeded";
@@ -426,7 +436,7 @@ const bookApprovalSlice = createSlice({
         state.statusToggleFeature = "loading";
         state.error = null;
       })
-      .addCase(toggleFeatureBook.fulfilled, (state, action) => {
+      .addCase(toggleFeatureBook.fulfilled, (state) => {
         state.statusToggleFeature = "succeeded";
         // No need to update state here unless you want to reflect changes locally
       })

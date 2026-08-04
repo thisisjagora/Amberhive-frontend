@@ -30,7 +30,21 @@ import {
 import { FaSpinner } from "react-icons/fa";
 import { Skeleton } from "@/components/ui/skeleton";
 import ReaderEpub from "@/components/ReaderEpub";
-import { formatDate } from "@/utils/format";
+
+const normalizeTags = (tags) => {
+  if (Array.isArray(tags)) return tags;
+  if (typeof tags !== "string" || !tags.trim()) return [];
+
+  try {
+    const parsedTags = JSON.parse(tags);
+    return Array.isArray(parsedTags) ? parsedTags : [];
+  } catch {
+    return tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+};
 
 const ViewBook = () => {
   const { id } = useParams();
@@ -45,13 +59,14 @@ const ViewBook = () => {
   const maxLength = 1000;
 
   const dispatch = useDispatch();
-  const { bookDetail, statusBookDetail, error, statusToggleFeature } =
+  const { bookDetail, statusBookDetail, statusToggleFeature } =
     useSelector((state) => state.bookApproval);
-  const book = bookDetail?.book;
+  const book = typeof bookDetail?.book === "string" ? bookDetail.book : "";
+  const tags = normalizeTags(bookDetail?.tags);
 
   // console.log(book)
 
-  const isEpub = book?.toLowerCase().endsWith(".epub");
+  const isEpub = book.toLowerCase().split("?")[0].endsWith(".epub");
 
   useEffect(() => {
     if (id) {
@@ -320,10 +335,7 @@ const ViewBook = () => {
               {renderRow(
                 "Tags",
                 <div className="flex gap-2 flex-wrap">
-                  {(typeof bookDetail?.tags === "string"
-                    ? JSON.parse(bookDetail.tags)
-                    : bookDetail?.tags || []
-                  ).map((tag, i) => (
+                  {tags.map((tag, i) => (
                     <span
                       key={i}
                       className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
