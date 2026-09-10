@@ -21,6 +21,7 @@ const TableComponent = ({
   isLoading,
   showPagination = true,
   serverPagination = null,
+  onRowClick,
 }) => {
   const table = useReactTable({
     data,
@@ -72,7 +73,11 @@ const TableComponent = ({
               ))
             ) : table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  onClick={() => onRowClick?.(row.original)}
+                  className={onRowClick ? "cursor-pointer transition-colors hover:bg-slate-50" : undefined}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

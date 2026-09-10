@@ -151,6 +151,27 @@ export const deleteAdmin = createAsyncThunk(
   }
 );
 
+// Update an admin's password. The API is responsible for notifying the admin
+// by email after a successful reset.
+export const updateAdminPassword = createAsyncThunk(
+  "users/updateAdminPassword",
+  async ({ userId, new_password, new_password_confirmation }, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.post(
+        `/admin/users/${userId}/password`,
+        { new_password, new_password_confirmation },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to update the admin password"
+      );
+    }
+  }
+);
+
 // Slice
 const usersSlice = createSlice({
   name: "users",

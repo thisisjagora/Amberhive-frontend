@@ -23,18 +23,6 @@ export const links = [
   },
 
   {
-    name: "User Management",
-    path: "/super-admin/user-managements",
-    icon: <img src={promIcon2} alt="Promotion Icon" className="w-4 h-4" />,
-    subLinks: [],
-  },
-  {
-    name: "Admin Management",
-    path: "/super-admin/admin-management",
-    icon: <MdAdminPanelSettings className="w-5 h-5" />, // 🔷 updated icon here
-    subLinks: [],
-  },
-  {
     name: "Reports",
     path: "/super-admin/report",
     icon: <img src={reportIcon2} alt="Publications Icon" className="w-4 h-4" />,
@@ -61,6 +49,18 @@ export const links = [
         path: "/super-admin/reports/user-management-reports",
       },
     ],
+  },
+  {
+    name: "User Management",
+    path: "/super-admin/user-managements",
+    icon: <img src={promIcon2} alt="Promotion Icon" className="w-4 h-4" />,
+    subLinks: [],
+  },
+  {
+    name: "Admin Management",
+    path: "/super-admin/admin-management",
+    icon: <MdAdminPanelSettings className="w-5 h-5" />,
+    subLinks: [],
   },
   {
     name: "Subscription",

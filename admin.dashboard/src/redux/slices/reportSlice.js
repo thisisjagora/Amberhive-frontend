@@ -26,6 +26,23 @@ export const fetchBookReports = createAsyncThunk(
   }
 );
 
+export const fetchBookReportDetail = createAsyncThunk(
+  "reports/fetchBookReportDetail",
+  async ({ bookId, year }, thunkAPI) => {
+    try {
+      const response = await api.get(`/admin/book-reports/${bookId}`, {
+        ...getAuthHeaders(),
+        params: { year },
+      });
+      return response.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch book report details"
+      );
+    }
+  }
+);
+
 export const fetchAuthorReports = createAsyncThunk(
   "reports/fetchAuthorReports",
   async (_, thunkAPI) => {
@@ -74,11 +91,13 @@ const reportSlice = createSlice({
   name: "reports",
   initialState: {
     bookReports: [],
+    bookReportDetail: null,
     authorReports: [],
     buyerReports: [],
     earningsReport: [],
 
     statusBookReports: "idle",
+    statusBookReportDetail: "idle",
     statusAuthorReports: "idle",
     statusBuyerReports: "idle",
     statusEarningsReport: "idle",
@@ -98,6 +117,19 @@ const reportSlice = createSlice({
       })
       .addCase(fetchBookReports.rejected, (state, action) => {
         state.statusBookReports = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchBookReportDetail.pending, (state) => {
+        state.statusBookReportDetail = "loading";
+        state.bookReportDetail = null;
+        state.error = null;
+      })
+      .addCase(fetchBookReportDetail.fulfilled, (state, action) => {
+        state.statusBookReportDetail = "succeeded";
+        state.bookReportDetail = action.payload;
+      })
+      .addCase(fetchBookReportDetail.rejected, (state, action) => {
+        state.statusBookReportDetail = "failed";
         state.error = action.payload;
       })
 

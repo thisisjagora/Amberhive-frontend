@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SuperAdminLayout from "./DashboardLayout";
-import { Loader2, Search, Trash2 } from "lucide-react";
+import { KeyRound, Loader2, Search, Trash2 } from "lucide-react";
 import TableComponent from "@/components/TableComponent";
 import { Input } from "@/components/ui/input";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import {
   fetchAllRoles,
   fetchAdmins,
   deleteAdmin,
+  updateAdminPassword,
 } from "@/redux/slices/usersSlice";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -24,10 +25,15 @@ import {
 } from "@/components/ui/alert-dialog";
 import CreateAdmin from "@/components/forms/CreateAdmin";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 
 const AdminManagament = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openDialogId, setOpenDialogId] = useState(null);
+  const [selectedAdminId, setSelectedAdminId] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   const dispatch = useDispatch();
   const { admins, statusAdmins, deletingAdminId } = useSelector(
@@ -47,6 +53,45 @@ const AdminManagament = () => {
       setOpenDialogId(null); // close the dialog on success
     } catch (err) {
       toast.error(err?.message || "Failed to delete admin");
+    }
+  };
+
+  const handlePasswordChange = async (event) => {
+    event.preventDefault();
+
+    if (!selectedAdminId) {
+      toast.error("Select an admin first");
+      return;
+    }
+
+    if (!newPassword || !confirmPassword) {
+      toast.error("Enter and confirm the new password");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const result = await dispatch(
+        updateAdminPassword({
+          userId: selectedAdminId,
+          new_password: newPassword,
+          new_password_confirmation: confirmPassword,
+        })
+      ).unwrap();
+      setNewPassword("");
+      setConfirmPassword("");
+      toast.success(result?.message || "Password updated and email notification sent");
+    } catch (error) {
+      toast.error(
+        error?.message || error?.error || "Unable to update password. Please try again."
+      );
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -227,6 +272,67 @@ const AdminManagament = () => {
             isLoading={statusAdmins === "loading"}
           />
         </div>
+
+        <section className="mt-6 max-w-xl rounded-lg border bg-white p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <span className="rounded-lg bg-amber-50 p-2 text-amber-600">
+              <KeyRound className="h-5 w-5" />
+            </span>
+            <div>
+              <h2 className="font-semibold text-gray-900">Change password</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Choose an admin, set a new password, and notify them by email.
+              </p>
+            </div>
+          </div>
+
+          <form className="mt-5 space-y-4" onSubmit={handlePasswordChange}>
+            <div className="space-y-2">
+              <Label htmlFor="admin-password-user">Admin</Label>
+              <select
+                id="admin-password-user"
+                value={selectedAdminId}
+                onChange={(event) => setSelectedAdminId(event.target.value)}
+                disabled={isUpdatingPassword || statusAdmins === "loading"}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">Select an admin</option>
+                {(admins || []).map((admin) => (
+                  <option key={admin.id} value={admin.id}>
+                    {admin.name} ({admin.email})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-password">New password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                placeholder="Enter a new password"
+                disabled={isUpdatingPassword}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-password-confirmation">Confirm new password</Label>
+              <Input
+                id="new-password-confirmation"
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                placeholder="Re-enter your new password"
+                disabled={isUpdatingPassword}
+              />
+            </div>
+            <Button type="submit" disabled={isUpdatingPassword} className="min-w-36">
+              {isUpdatingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update password"}
+            </Button>
+          </form>
+        </section>
       </div>
     </SuperAdminLayout>
   );

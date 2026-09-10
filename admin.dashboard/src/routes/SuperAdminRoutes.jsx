@@ -3,6 +3,7 @@ import Announcements from "@/pages/dashboard/superadmin/Announcements";
 import AuthorDetail from "@/pages/dashboard/superadmin/AuthorDetail";
 import AuthorReports from "@/pages/dashboard/superadmin/AuthorReports";
 import BookReports from "@/pages/dashboard/superadmin/BookReports";
+import BookReportDetail from "@/pages/dashboard/superadmin/BookReportDetail";
 import BuyerReports from "@/pages/dashboard/superadmin/BuyerReports";
 import EarningsReports from "@/pages/dashboard/superadmin/EarningsReports";
 import JagoraSupport from "@/pages/dashboard/superadmin/JagoraSupport";
@@ -34,6 +35,7 @@ const SuperAdminRoutes = () => {
       <Route path="admin-management" element={<AdminManagament />} />
       <Route path="user-managements/author/:id" element={<AuthorDetail />} />
       <Route path="reports/book-reports" element={<BookReports />} />
+      <Route path="reports/book-reports/:bookId" element={<BookReportDetail />} />
       <Route path="reports/promotion-reports" element={<PromotionReports />} />
       <Route path="reports/author-reports" element={<AuthorReports />} />
       <Route path="reports/buyer-reports" element={<BuyerReports />} />
