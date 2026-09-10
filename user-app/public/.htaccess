@@ -1,0 +1,12 @@
+Options -MultiViews
+RewriteEngine On
+
+# Social-preview bots do not run the React app. Send only their book URLs to
+# the PHP preview renderer; people continue to receive the SPA below.
+RewriteCond %{HTTP_USER_AGENT} (facebookexternalhit|Facebot|Twitterbot|Slackbot|LinkedInBot|Discordbot|TelegramBot|WhatsApp|Googlebot) [NC]
+RewriteRule ^book/([^/]+)/?$ book-preview.php?slug=$1 [L,QSA,NC]
+
+# React Router fallback.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]

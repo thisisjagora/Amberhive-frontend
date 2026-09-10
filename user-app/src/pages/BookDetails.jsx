@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { ArrowLeft, Check, Copy, Loader2, ShoppingCart } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,8 @@ import { useEffect, useState } from "react";
 import { formatDate } from "@/utils/format";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchBestSellers,
   fetchBookById,
-  fetchBooks,
-  fetchFeaturedBooks,
+  fetchBookBySlug,
 } from "@/store/slice/bookSlice";
 import { fetchFavorites, toggleFavorite } from "@/store/slice/favoritesSlice";
 import { addToCart, fetchCarts } from "@/store/slice/cartSlice";
@@ -30,43 +28,23 @@ export default function BookDetails() {
   const [addedToFavorites, setAddedToFavorites] = useState(false);
 
   const { slug } = useParams();
+  const location = useLocation();
+  const bookId = location.state?.bookId;
   const dispatch = useDispatch();
 
   const {
-    books,
-    bestSellers,
-    newReleases,
-    featuredBooks,
     bookDetail,
     statusBookDetail,
     error,
   } = useSelector((state) => state.books);
 
   useEffect(() => {
-    // If books aren't loaded, fetch them
-    if (statusBookDetail === "idle" || books.length === 0) {
-      dispatch(fetchBooks());
-      dispatch(fetchBestSellers());
-      dispatch(fetchBestSellers());
-      dispatch(fetchFeaturedBooks());
+    if (bookId) {
+      dispatch(fetchBookById(bookId));
+    } else if (slug) {
+      dispatch(fetchBookBySlug(slug));
     }
-  }, [dispatch, statusBookDetail, books.length]);
-
-  useEffect(() => {
-    if (slug) {
-      const allBooks = [
-        ...books,
-        ...bestSellers,
-        ...newReleases,
-        ...featuredBooks,
-      ];
-      const foundBook = allBooks.find((book) => book.slug === slug);
-
-      if (foundBook) {
-        dispatch(fetchBookById(foundBook.id));
-      }
-    }
-  }, [books, slug, dispatch, navigate]);
+  }, [bookId, slug, dispatch]);
 
   const [user, setUser] = useState(null);
 

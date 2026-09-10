@@ -72,6 +72,48 @@ export const fetchBookById = createAsyncThunk(
   }
 );
 
+// Resolve a public book URL when the page is opened directly. Detail links
+// contain a slug, while the detail endpoint requires a numeric book id.
+export const fetchBookBySlug = createAsyncThunk(
+  "books/fetchBookBySlug",
+  async (slug, thunkAPI) => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const firstResponse = await api.get("/all-books?page=1", { headers });
+      const firstPage = firstResponse.data.data;
+      const firstBooks = firstPage?.data || [];
+
+      let book = firstBooks.find((item) => item.slug === slug);
+
+      if (!book) {
+        const pages = Array.from(
+          { length: Math.max((firstPage?.last_page || 1) - 1, 0) },
+          (_, index) => index + 2
+        );
+        const responses = await Promise.all(
+          pages.map((page) => api.get(`/all-books?page=${page}`, { headers }))
+        );
+
+        book = responses
+          .flatMap((response) => response.data.data?.data || [])
+          .find((item) => item.slug === slug);
+      }
+
+      if (!book) {
+        return thunkAPI.rejectWithValue("Book not found");
+      }
+
+      const detailResponse = await api.get(`/view-book/${book.id}`, { headers });
+      return detailResponse.data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch book details"
+      );
+    }
+  }
+);
+
 // Fetch user's library books
 export const fetchMyLibrary = createAsyncThunk(
   "books/fetchMyLibrary",
@@ -260,6 +302,19 @@ const bookSlice = createSlice({
         state.bookDetail = action.payload || null;
       })
       .addCase(fetchBookById.rejected, (state, action) => {
+        state.statusBookDetail = "failed";
+        state.error = action.payload;
+      })
+
+      // ===== fetchBookBySlug =====
+      .addCase(fetchBookBySlug.pending, (state) => {
+        state.statusBookDetail = "loading";
+      })
+      .addCase(fetchBookBySlug.fulfilled, (state, action) => {
+        state.statusBookDetail = "succeeded";
+        state.bookDetail = action.payload || null;
+      })
+      .addCase(fetchBookBySlug.rejected, (state, action) => {
         state.statusBookDetail = "failed";
         state.error = action.payload;
       })
